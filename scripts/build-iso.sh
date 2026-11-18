@@ -25,12 +25,19 @@ lb config \
   --binary-images iso-hybrid \
   --debian-installer none \
   --archive-areas "main contrib non-free-firmware" \
+  --apt-recommends false \
+  --apt-indices false \
+  --apt-source-archives false \
+  --firmware-chroot false \
+  --firmware-binary false \
+  --chroot-squashfs-compression-type xz \
   --bootappend-live "boot=live components locales=en_US.UTF-8"
 cp -a "$ROOT/image/config/." config/
 install -Dm0755 "$ROOT/scripts/doctor.sh" config/includes.chroot/usr/local/bin/smol-doctor
 chmod 0755 config/hooks/live/*.hook.chroot
-# Cua Driver is installed by the chroot build hook, not by a user opt-in.
+# Cua Driver remains included by default in the image, via the chroot hook.
 lb build
+
 found=0
 for iso in ./*.iso; do
   [[ -f $iso ]] || continue

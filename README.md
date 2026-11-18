@@ -2,38 +2,59 @@
 
 **Small desktop. Big automation.**
 
-SMOL is an experimental Debian 13 (Trixie) live Linux distribution with LXQt/X11 and **Cua Driver built in** for agent-friendly computer use. This source project targets ≤2 GiB RAM for a defined set of basic tasks; the figure is not yet verified, and arbitrary apps can exceed it.
+SMOL is an experimental Debian 13 (Trixie) Linux live distribution with LXQt/X11 and **Cua Driver bundled by default** for agent-friendly computer use. It targets <=2 GiB RAM during a defined set of basic tasks; this has not yet been measured.
+
+## Lightweight ISO target
+
+The default SMOL build now **targets a 700 MB ISO (700,000,000 bytes)**. This is an engineering target, **not a guaranteed build size**. GitHub Actions reports the actual ISO size after building; the image is always uploaded even if it exceeds the target, so that developers can inspect the result.
+
+To reduce size versus the initial ~1.8 GB image:
+
+- Do not install Debian's recommended packages automatically.
+- Use XZ SquashFS compression and omit saved apt indexes and source indexes.
+- Remove bundled Chromium, Flatpak, Distrobox, Git, and other optional tools; install them with apt when needed.
+- Use the smaller NetSurf browser on the dock instead of Chromium.
+- Omit the separate firmware bundle by default. Some real hardware, especially Wi-Fi adapters, may need firmware installed later. Do not assume full hardware support.
+
+These are **image-content** trade-offs; SMOL can still run compatible apt applications and can add Flatpak / Distrobox / Chromium later. NetSurf lacks many modern web app features. Apps and kernel drivers are not universally compatible across architectures.
 
 ## Desktop styling
 
-Inspired by the supplied desktop reference: a saturated blue sky, bright canyon desert, bold white **SMOL** wordmark, and **centered translucent three-icon dock**. Unlike a screenshot, all three icons are functional: **Chromium**, **Files**, and **Settings**. See [Desktop design](docs/DESKTOP.md). The design is encoded as default files in the live ISO.
+Inspired by the supplied desert-blue reference: bold **SMOL** wordmark, vivid wallpaper, and a working translucent three-icon dock for **NetSurf**, **Files** and **Settings**. See [docs/DESKTOP.md](docs/DESKTOP.md).
 
-## Build SMOL ISO
+## Build ISO
 
-On Debian 13 (amd64):
+On Debian 13 amd64:
 
     sudo apt update
     sudo apt install -y live-build debootstrap squashfs-tools xorriso grub-efi-amd64-bin grub-pc-bin
     sudo bash scripts/build-iso.sh
 
-On success: dist/smol-trixie-amd64-live.iso (and SHA-256). GitHub Actions has an automated ISO build workflow under Actions → Build SMOL ISO; if it completes, its ZIP artifact contains the ISO and checksum.
+Output if successful: `dist/smol-trixie-amd64-live.iso` and a SHA-256 file. GitHub Actions `Build SMOL ISO` builds automatically on pushes and uploads the ISO ZIP as an artifact (with a 7-day retention period).
 
-**Prototype status:** neither the ISO nor its graphical appearance and Cua integration has been confirmed boot-tested. No disk installer is included yet. The build downloads third-party Cua Driver during the image build and fails if it is unavailable.
+This is a **live-only source prototype**, not a disk installer. ISO creation alone does not demonstrate successful booting, desktop appearance, or Cua agent operation. The image build downloads and installs the upstream Cua Driver and fails if it cannot be installed.
 
-## AI application testing
+## Agent-driven GUI testing
 
-Cua is installed in the image by default; agent connections remain local to the test desktop unless an authorized operator explicitly configures a secure transport.
+Cua Driver is installed in the live image by default. Connect trusted agents locally via stdio MCP; do not expose uncontrolled remote desktop access.
 
     cua-driver doctor
     cua-driver mcp
 
-Use the **single** agent QA skill at [skills/smol-app-qa/SKILL.md](skills/smol-app-qa/SKILL.md). There is no separate QA evidence logger, recorder or daemon. Broad Linux app support includes apt, Flatpak, compatible AppImages and Distrobox, within the usual architecture/dependency limits.
+SMOL has one application QA skill, at [skills/smol-app-qa/SKILL.md](skills/smol-app-qa/SKILL.md). There is no separate QA recording or evidence service.
+
+To install larger applications after boot (requires network access and writable session):
+
+    sudo apt update
+    sudo apt install chromium flatpak distrobox
+
+For Distrobox, also install/configure a container engine such as Podman. For AppImage compatibility, SMOL includes `libfuse2t64`.
 
 ## Validation
 
     bash scripts/validate-layout.sh
     bash -n scripts/*.sh
 
-The source CI performs syntax and configuration checks; real installation, boot and GUI tests are separate milestones.
+Automated source and ISO-build checks are not substitutes for a VM boot test, a driver smoke test and a measured RAM budget.
 
-SMOL-original code and artwork: MIT (LICENSE). All upstream components retain their own licenses. SMOL is an independent project.
+SMOL-original code and artwork: MIT (LICENSE). Upstream Debian and Cua components retain their own licenses. SMOL is independent of both.

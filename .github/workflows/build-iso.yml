@@ -38,6 +38,22 @@ jobs:
           test -s dist/smol-trixie-amd64-live.iso
           (cd dist && sha256sum --check smol-trixie-amd64-live.iso.sha256)
           file dist/smol-trixie-amd64-live.iso
+      - name: Report ISO size
+        run: |
+          bytes=$(stat -c '%s' dist/smol-trixie-amd64-live.iso)
+          mib=$(awk -v bytes="$bytes" 'BEGIN {printf "%.1f",bytes/1048576}')
+          mb=$(awk -v bytes="$bytes" 'BEGIN {printf "%.1f",bytes/1000000}')
+          {
+            echo '### SMOL ISO size'
+            echo "Actual image: **${mb} MB** (${mib} MiB, ${bytes} bytes)"
+            echo 'Target: 700 MB (700,000,000 bytes)'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if (( bytes > 700000000 )); then
+            echo "::warning::ISO exceeds 700 MB size goal: ${mb} MB"
+            echo '**Target not yet met.** More optimization is needed.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '**700 MB size goal met!**' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload boot-image artifact
         uses: actions/upload-artifact@v4
         with:

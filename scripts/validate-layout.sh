@@ -20,5 +20,16 @@ done
 python3 -m json.tool "$ROOT/agent/cua-driver.mcp.json" >/dev/null
 grep -q 'CUA_DRIVER_RS_HOME=/opt/cua-driver' "$ROOT/image/config/hooks/live/0200-install-cua.hook.chroot"
 grep -q 'plank' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -q '^netsurf-gtk$' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -q '^user-setup$' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -q '^Exec=netsurf-gtk$' "$ROOT/image/config/includes.chroot/usr/share/applications/smol-browser.desktop"
+for unwanted in chromium distrobox flatpak; do
+  if grep -qx "$unwanted" "$ROOT/image/config/package-lists/smol.list.chroot"; then
+    echo "Heavy package still preinstalled: $unwanted" >&2
+    exit 1
+  fi
+done
+grep -q -- '--apt-recommends false' "$ROOT/scripts/build-iso.sh"
+grep -q -- '--chroot-squashfs-compression-type xz' "$ROOT/scripts/build-iso.sh"
 grep -q 'smol-app-qa' "$ROOT/skills/smol-app-qa/SKILL.md"
-echo "SMOL source checks passed."
+echo "SMOL lite source checks passed."

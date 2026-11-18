@@ -1,9 +1,12 @@
-# Debian desktop and core automation, with a real 3-icon glassy dock
+# SMOL lite: functional LXQt / X11 desktop with Cua Driver installed in build hook
+# Explicitly install critical packages because APT recommends are disabled.
 linux-image-amd64
 live-boot
 live-config
 systemd-sysv
 locales
+sudo
+user-setup
 xserver-xorg
 xserver-xorg-input-libinput
 dbus-x11
@@ -17,25 +20,18 @@ qterminal
 lxqt-policykit
 network-manager
 network-manager-gnome
+wpasupplicant
 at-spi2-core
 libatk-adaptor
-fonts-noto-core
 fonts-dejavu-core
 papirus-icon-theme
 arc-theme
 plank
 picom
-chromium
+netsurf-gtk
 galculator
-mousepad
 python3
 curl
 ca-certificates
-git
-jq
-scrot
 xdotool
-wmctrl
-flatpak
-distrobox
-fuse3
+libfuse2t64

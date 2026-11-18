@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
-chmod 0755 /usr/local/bin/smol-qa /usr/local/bin/smol-doctor /usr/local/bin/smol-install-cua
-# No unattended or network-reachable agent service is enabled.
+chmod 0755 /usr/local/bin/smol-doctor
+# Cua Driver is preinstalled in the next build hook; no remote listener is enabled.

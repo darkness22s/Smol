@@ -1,0 +1,18 @@
+name: SMOL source checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell syntax
+        run: |
+          bash -n scripts/*.sh
+          sh -n image/config/hooks/live/*.hook.chroot
+      - name: Check Cua and skill structure
+        run: bash scripts/validate-layout.sh

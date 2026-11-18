@@ -1,0 +1,24 @@
+#!/bin/sh
+# Required Cua Driver installation during ISO build, not during user login.
+set -eu
+command -v curl >/dev/null 2>&1 || { echo "curl missing from image" >&2; exit 1; }
+installer=$(mktemp)
+trap 'rm -f "$installer"' EXIT
+curl --fail --location --silent --show-error --proto '=https' --tlsv1.2 \
+  https://cua.ai/driver/install.sh --output "$installer"
+# Keep the versioned driver outside /root and expose its launcher to all users.
+export CUA_DRIVER_RS_HOME=/opt/cua-driver
+export CUA_DRIVER_RS_INSTALL_DIR=/usr/local/bin
+export CUA_DRIVER_RS_NO_MODIFY_PATH=1
+export CUA_DRIVER_RS_NO_CONNECT=1
+export CUA_DRIVER_RS_NO_TEST=1
+/bin/bash "$installer" \
+  --bin-dir /usr/local/bin \
+  --no-modify-path \
+  --no-connect \
+  --no-test
+test -x /usr/local/bin/cua-driver || {
+  echo "Cua Driver was not installed; abort image build" >&2
+  exit 1
+}
+echo "Installed Cua Driver by default in SMOL image."

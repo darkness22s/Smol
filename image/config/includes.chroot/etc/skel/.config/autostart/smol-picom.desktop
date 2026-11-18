@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=SMOL Transparency
+Comment=Lightweight compositor for the translucent dock
+Exec=picom --backend xrender --vsync --no-fading-openclose
+OnlyShowIn=LXQt;

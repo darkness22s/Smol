@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=LXQt Panel
+Exec=lxqt-panel
+X-LXQt-Module=true
+X-LXQt-Autostart-disabled=true
+Hidden=true

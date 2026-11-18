@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Browser
+Comment=Open Chromium
+Exec=chromium
+TryExec=chromium
+Icon=chromium
+Terminal=false
+Categories=Network;WebBrowser;

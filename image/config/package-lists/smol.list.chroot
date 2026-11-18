@@ -1,4 +1,4 @@
-# Lightweight desktop and broad Linux application tooling
+# Debian desktop and core automation, with a real 3-icon glassy dock
 linux-image-amd64
 live-boot
 live-config
@@ -10,6 +10,7 @@ dbus-x11
 lightdm
 lightdm-gtk-greeter
 lxqt-core
+lxqt-config
 openbox
 pcmanfm-qt
 qterminal
@@ -19,11 +20,14 @@ network-manager-gnome
 at-spi2-core
 libatk-adaptor
 fonts-noto-core
+fonts-dejavu-core
 papirus-icon-theme
 arc-theme
+plank
+picom
+chromium
 galculator
 mousepad
-firefox-esr
 python3
 curl
 ca-certificates

@@ -2,44 +2,38 @@
 
 **Small desktop. Big automation.**
 
-SMOL is an experimental Debian 13 (Trixie) Linux live distribution built around a lightweight LXQt/X11 desktop, common Linux applications, and the Cua Driver computer-use platform.
+SMOL is an experimental Debian 13 (Trixie) live Linux distribution with LXQt/X11 and **Cua Driver built in** for agent-friendly computer use. This source project targets ≤2 GiB RAM for a defined set of basic tasks; the figure is not yet verified, and arbitrary apps can exceed it.
 
-**Cua Driver is included by default at ISO build time.** For application testing there is **one agent skill**: [SMOL app QA](skills/smol-app-qa/SKILL.md). No standalone QA runner, evidence collector, screenshot archive, or QA daemon.
+## Desktop styling
 
-## Status
+Inspired by the supplied desktop reference: a saturated blue sky, bright canyon desert, bold white **SMOL** wordmark, and **centered translucent three-icon dock**. Unlike a screenshot, all three icons are functional: **Chromium**, **Files**, and **Settings**. See [Desktop design](docs/DESKTOP.md). The design is encoded as default files in the live ISO.
 
-Source prototype. A successful ISO build, GUI boot, Cua integration and memory performance have not yet been validated. Goals are <700 MiB at idle and <=2 GiB for defined basic tasks; not guarantees for arbitrary apps, browsers, or local models.
+## Build SMOL ISO
 
-## Build on Debian 13 amd64
+On Debian 13 (amd64):
 
     sudo apt update
     sudo apt install -y live-build debootstrap squashfs-tools xorriso grub-efi-amd64-bin grub-pc-bin
     sudo bash scripts/build-iso.sh
 
-A successful build creates dist/smol-trixie-amd64-live.iso. The image is live-only, not a disk installer. During the build, the image chroot downloads and installs Cua Driver system-wide from the official upstream release; it fails if the driver cannot be installed. An internet connection is required.
+On success: dist/smol-trixie-amd64-live.iso (and SHA-256). GitHub Actions has an automated ISO build workflow under Actions → Build SMOL ISO; if it completes, its ZIP artifact contains the ISO and checksum.
 
-## App compatibility
+**Prototype status:** neither the ISO nor its graphical appearance and Cua integration has been confirmed boot-tested. No disk installer is included yet. The build downloads third-party Cua Driver during the image build and fails if it is unavailable.
 
-Debian apt packages, Flatpak, compatible AppImages and Distrobox userspaces. No Linux distro can literally run every Linux binary regardless of architecture, drivers or dependencies.
+## AI application testing
 
-## Agent integration and QA
-
-Cua Driver is preinstalled in SMOL. In the logged-in X11 desktop session:
+Cua is installed in the image by default; agent connections remain local to the test desktop unless an authorized operator explicitly configures a secure transport.
 
     cua-driver doctor
-    cua-driver call list_apps
+    cua-driver mcp
 
-An authorized local agent connects through stdio MCP using the command cua-driver mcp (example in agent/cua-driver.mcp.json). The [SMOL app QA skill](skills/smol-app-qa/SKILL.md) teaches the agent to operate applications and verify outcomes from fresh UI observations, returning PASS/FAIL/BLOCKED directly to the user.
+Use the **single** agent QA skill at [skills/smol-app-qa/SKILL.md](skills/smol-app-qa/SKILL.md). There is no separate QA evidence logger, recorder or daemon. Broad Linux app support includes apt, Flatpak, compatible AppImages and Distrobox, within the usual architecture/dependency limits.
 
-The driver is built in, but SMOL does not publish unauthenticated network access to the desktop.
-
-## Automated source checks
+## Validation
 
     bash scripts/validate-layout.sh
     bash -n scripts/*.sh
 
-GitHub Actions checks these on every push and pull request. These source checks are not a replacement for building and boot-testing an ISO.
+The source CI performs syntax and configuration checks; real installation, boot and GUI tests are separate milestones.
 
-## License
-
-Original SMOL code and artwork: MIT (LICENSE). Debian, Cua Driver and other upstream packages retain their own licenses. SMOL is independent of Debian and Cua.
+SMOL-original code and artwork: MIT (LICENSE). All upstream components retain their own licenses. SMOL is an independent project.

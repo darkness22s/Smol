@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Settings
+Exec=lxqt-config
+TryExec=lxqt-config
+Icon=preferences-system
+Terminal=false
+Categories=Settings;

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SMOL Diagnostics
+Comment=Check desktop RAM and agent readiness
+Exec=smol-doctor
+Terminal=true
+Icon=utilities-system-monitor
+Categories=System;

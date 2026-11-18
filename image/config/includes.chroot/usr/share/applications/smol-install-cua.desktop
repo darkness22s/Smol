@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Install Cua Driver (opt-in)
+Comment=Install desktop computer-use tools only with user consent
+Exec=smol-install-cua
+Terminal=true
+Icon=utilities-terminal
+Categories=System;Development;

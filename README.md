@@ -1,22 +1,47 @@
 # SMOL Linux
 
-SMOL is an experimental, lightweight, agent-friendly Linux distribution project built on Debian 13 (Trixie), LXQt, and X11. It aims for less than 2 GiB RAM during selected basic tasks, broad Linux app compatibility, and repeatable agent-driven GUI QA via Cua Driver.
+**Small desktop. Big automation.**
 
-This is early-stage source code, not a tested downloadable operating system. ISO building, actual boot, RAM use, and Cua Driver interoperability must be validated on physical hardware and VMs.
+SMOL is an experimental Debian 13 (Trixie) live distribution for lean desktop use, broad Linux app compatibility, and AI-assisted GUI quality assurance. The first prototype uses LXQt + X11 and an opt-in Cua Driver installer.
 
-## Initial architecture
+**Status: source prototype, not a tested OS release.** ISO creation, actual booting, Cua functionality, and memory targets have not yet been validated.
 
-- Debian live-build creates an amd64 live ISO from a minimal LXQt/X11 package set.
-- SMOL branding is applied through desktop defaults and an original SVG wallpaper.
-- Cua Driver is installed on demand by the local user and exposed to trusted agents over stdio MCP. It is not silently preinstalled or exposed on a network port.
-- An opt-in QA runner captures launch logs, optional screenshots, timing, and process RAM observations.
+## Goals
 
-Read docs/ARCHITECTURE.md and docs/QUICKSTART.md after the project scaffolding is committed.
+- Target under 700 MiB of RAM at idle and at most 2048 MiB for a defined basic-task suite; neither is a guarantee.
+- Support Debian apt packages, Flatpak, AppImage where compatible, and Distrobox environments. Not every Linux binary is universally runnable.
+- Integrate upstream Cua Driver for trusted agents via local stdio MCP, while keeping network-facing automation disabled.
+- Make QA easier with a launcher/evidence recorder for logs, screenshots (with consent), and RAM measurements.
 
-## Status
+## Build on Debian 13 amd64
 
-**Prototype / unverified.** The build scripts and integration are a starting point, not a supported release.
+    sudo apt update
+    sudo apt install -y live-build debootstrap squashfs-tools xorriso grub-efi-amd64-bin grub-pc-bin
+    sudo bash scripts/build-iso.sh
+
+If successful, the live ISO is copied to dist/smol-trixie-amd64-live.iso. There is no disk installer yet.
+
+## Developer checks
+
+    bash scripts/validate-layout.sh
+    python3 -m unittest discover -s tests -v
+    bash -n scripts/*.sh
+
+## On SMOL: enable agents and QA
+
+Open the application-menu item "Install Cua Driver (opt-in)" or run:
+
+    smol-install-cua
+    smol-doctor
+
+Connect a trusted local MCP client with command "cua-driver" and argument "mcp" (see agent/cua-driver.mcp.json). Installation is deliberately not automatic at boot.
+
+    smol-qa --name calculator --duration 20 --screenshot -- galculator
+
+The QA runner produces evidence for an agent or human to inspect; it does not fabricate a visual test verdict.
+
+Read docs/QUICKSTART.md, docs/ARCHITECTURE.md, docs/AGENTS.md and docs/SECURITY.md.
 
 ## License
 
-Original SMOL code and art: MIT (see LICENSE). Upstream Debian packages, Cua Driver, and other dependencies retain their own licenses.
+SMOL-original code and artwork: MIT (LICENSE). Third-party components remain under their respective licenses. SMOL is unaffiliated with Debian and Cua.

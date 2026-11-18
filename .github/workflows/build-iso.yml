@@ -1,0 +1,50 @@
+name: Build SMOL ISO
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  iso:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout SMOL
+        uses: actions/checkout@v4
+      - name: Inspect builder resources
+        run: |
+          df -h
+          docker --version
+      - name: Build using Debian 13 live-build
+        run: |
+          docker run --rm --privileged \
+            -e DEBIAN_FRONTEND=noninteractive \
+            -v "${PWD}:/src" -w /src \
+            debian:trixie /bin/bash -euo pipefail -c '
+              apt-get update
+              apt-get install -y --no-install-recommends \
+                live-build debootstrap squashfs-tools xorriso \
+                grub-efi-amd64-bin grub-pc-bin \
+                curl ca-certificates git file
+              bash scripts/validate-layout.sh
+              bash scripts/build-iso.sh
+            '
+      - name: Check ISO and checksum
+        run: |
+          test -s dist/smol-trixie-amd64-live.iso
+          (cd dist && sha256sum --check smol-trixie-amd64-live.iso.sha256)
+          file dist/smol-trixie-amd64-live.iso
+      - name: Upload boot-image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smol-trixie-amd64-live
+          path: |
+            dist/smol-trixie-amd64-live.iso
+            dist/smol-trixie-amd64-live.iso.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0

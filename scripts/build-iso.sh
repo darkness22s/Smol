@@ -13,29 +13,25 @@ if ! command -v lb >/dev/null 2>&1; then
   exit 1
 fi
 if [[ $(uname -m) != x86_64 ]]; then
-  echo "Initial SMOL ISO target is amd64 (x86_64)." >&2
+  echo "SMOL currently targets amd64 (x86_64)." >&2
   exit 1
 fi
 mkdir -p "$WORK" "$DIST"
 cd "$WORK"
 if [[ -d config ]]; then lb clean --purge; fi
+# Restore the complete desktop and recommended dependencies; no 700 MB cap.
 lb config \
   --distribution trixie \
   --architectures amd64 \
   --binary-images iso-hybrid \
   --debian-installer none \
   --archive-areas "main contrib non-free-firmware" \
-  --apt-recommends false \
-  --apt-indices false \
-  --apt-source-archives false \
-  --firmware-chroot false \
-  --firmware-binary false \
-  --chroot-squashfs-compression-type xz \
   --bootappend-live "boot=live components locales=en_US.UTF-8"
+
 cp -a "$ROOT/image/config/." config/
 install -Dm0755 "$ROOT/scripts/doctor.sh" config/includes.chroot/usr/local/bin/smol-doctor
 chmod 0755 config/hooks/live/*.hook.chroot
-# Cua Driver remains included by default in the image, via the chroot hook.
+# Cua Driver and a real PNG wallpaper are installed into the live filesystem in hooks.
 lb build
 
 found=0

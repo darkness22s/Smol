@@ -1,5 +1,4 @@
-# SMOL lite: functional LXQt / X11 desktop with Cua Driver installed in build hook
-# Explicitly install critical packages because APT recommends are disabled.
+# Full SMOL desktop with browser and Linux app tooling
 linux-image-amd64
 live-boot
 live-config
@@ -23,15 +22,25 @@ network-manager-gnome
 wpasupplicant
 at-spi2-core
 libatk-adaptor
+fonts-noto-core
 fonts-dejavu-core
 papirus-icon-theme
 arc-theme
-plank
+tint2
 picom
-netsurf-gtk
+chromium
 galculator
+mousepad
 python3
 curl
 ca-certificates
+git
+jq
+scrot
 xdotool
+wmctrl
+flatpak
+distrobox
+fuse3
 libfuse2t64
+librsvg2-bin

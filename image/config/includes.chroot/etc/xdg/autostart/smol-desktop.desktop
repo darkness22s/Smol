@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=SMOL Desktop
+Comment=Set SMOL wallpaper and show its centered dock
+Exec=/usr/local/bin/smol-desktop-session
+TryExec=/usr/local/bin/smol-desktop-session
+Terminal=false
+OnlyShowIn=LXQt;
+X-LXQt-Need-Tray=false

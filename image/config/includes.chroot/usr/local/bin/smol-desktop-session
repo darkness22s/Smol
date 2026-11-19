@@ -1,0 +1,20 @@
+#!/bin/sh
+# Start the wallpaper manager and stable dock in a logged-in LXQt/X11 session.
+[ -n "${DISPLAY:-}" ] || exit 0
+wallpaper=/usr/share/backgrounds/smol/smol.png
+
+# This is idempotent with LXQt's own pcmanfm-qt desktop module.
+pcmanfm-qt --desktop --profile=lxqt >/dev/null 2>&1 &
+
+# Give the LXQt desktop module time to register, then apply a supported PNG.
+(
+  sleep 2
+  if [ -f "$wallpaper" ]; then
+    pcmanfm-qt --profile=lxqt --set-wallpaper="$wallpaper" --wallpaper-mode=fit >/dev/null 2>&1 || true
+  fi
+) >/dev/null 2>&1 &
+
+# Tint2 uses a top-layer, always-visible launcher panel. No Plank geometry.
+if ! pgrep -u "$(id -u)" -x tint2 >/dev/null 2>&1; then
+  exec tint2 -c /etc/xdg/smol/tint2rc
+fi

@@ -3,10 +3,14 @@ set -Eeuo pipefail
 ROOT=$(cd -- "$(dirname -- "$0")/.." && pwd)
 for path in README.md scripts/build-iso.sh scripts/doctor.sh \
   image/config/hooks/live/0200-install-cua.hook.chroot \
+  image/config/hooks/live/0300-render-wallpaper.hook.chroot \
   image/config/package-lists/smol.list.chroot \
   image/config/includes.chroot/usr/share/backgrounds/smol/smol.svg \
-  image/config/includes.chroot/etc/skel/.config/plank/dock1/settings \
-  image/config/includes.chroot/etc/skel/.config/autostart/smol-plank.desktop \
+  image/config/includes.chroot/etc/xdg/pcmanfm-qt/lxqt/settings.conf \
+  image/config/includes.chroot/etc/skel/.config/pcmanfm-qt/lxqt/settings.conf \
+  image/config/includes.chroot/etc/xdg/smol/tint2rc \
+  image/config/includes.chroot/etc/xdg/autostart/smol-desktop.desktop \
+  image/config/includes.chroot/usr/local/bin/smol-desktop-session \
   image/config/includes.chroot/usr/share/applications/smol-browser.desktop \
   image/config/includes.chroot/usr/share/applications/smol-files.desktop \
   image/config/includes.chroot/usr/share/applications/smol-settings.desktop \
@@ -14,22 +18,23 @@ for path in README.md scripts/build-iso.sh scripts/doctor.sh \
   [[ -f $ROOT/$path ]] || { echo "Missing: $path" >&2; exit 1; }
 done
 for path in scripts/install-cua.sh scripts/qa_run.py \
-  image/config/includes.chroot/usr/share/applications/smol-install-cua.desktop; do
-  [[ ! -e $ROOT/$path ]] || { echo "Legacy opt-in or QA file exists: $path" >&2; exit 1; }
+  image/config/includes.chroot/usr/share/applications/smol-install-cua.desktop \
+  image/config/includes.chroot/etc/skel/.config/autostart/smol-plank.desktop; do
+  [[ ! -e $ROOT/$path ]] || { echo "Legacy installer or dock file remains: $path" >&2; exit 1; }
 done
 python3 -m json.tool "$ROOT/agent/cua-driver.mcp.json" >/dev/null
 grep -q 'CUA_DRIVER_RS_HOME=/opt/cua-driver' "$ROOT/image/config/hooks/live/0200-install-cua.hook.chroot"
-grep -q 'plank' "$ROOT/image/config/package-lists/smol.list.chroot"
-grep -q '^netsurf-gtk$' "$ROOT/image/config/package-lists/smol.list.chroot"
-grep -q '^user-setup$' "$ROOT/image/config/package-lists/smol.list.chroot"
-grep -q '^Exec=netsurf-gtk$' "$ROOT/image/config/includes.chroot/usr/share/applications/smol-browser.desktop"
-for unwanted in chromium distrobox flatpak; do
-  if grep -qx "$unwanted" "$ROOT/image/config/package-lists/smol.list.chroot"; then
-    echo "Heavy package still preinstalled: $unwanted" >&2
-    exit 1
-  fi
-done
-grep -q -- '--apt-recommends false' "$ROOT/scripts/build-iso.sh"
-grep -q -- '--chroot-squashfs-compression-type xz' "$ROOT/scripts/build-iso.sh"
+grep -qx 'chromium' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -qx 'tint2' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -qx 'flatpak' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -qx 'distrobox' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -qx 'librsvg2-bin' "$ROOT/image/config/package-lists/smol.list.chroot"
+! grep -qx 'netsurf-gtk' "$ROOT/image/config/package-lists/smol.list.chroot"
+! grep -qx 'plank' "$ROOT/image/config/package-lists/smol.list.chroot"
+grep -q '^Exec=chromium %U' "$ROOT/image/config/includes.chroot/usr/share/applications/smol-browser.desktop"
+grep -q 'Wallpaper=/usr/share/backgrounds/smol/smol.png' "$ROOT/image/config/includes.chroot/etc/xdg/pcmanfm-qt/lxqt/settings.conf"
+grep -q 'launcher_item_app = /usr/share/applications/smol-browser.desktop' "$ROOT/image/config/includes.chroot/etc/xdg/smol/tint2rc"
+grep -q 'panel_layer = top' "$ROOT/image/config/includes.chroot/etc/xdg/smol/tint2rc"
+grep -q 'rsvg-convert' "$ROOT/image/config/hooks/live/0300-render-wallpaper.hook.chroot"
 grep -q 'smol-app-qa' "$ROOT/skills/smol-app-qa/SKILL.md"
-echo "SMOL lite source checks passed."
+echo "SMOL full-edition layout checks passed."

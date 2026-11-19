@@ -1,0 +1,41 @@
+# SMOL three-button glass dock. Uses tint2 instead of the clipped Plank dock.
+# Background 1: translucent glass with white edge
+rounded = 16
+border_width = 1
+border_sides = LRTB
+background_color = #d3e5f6 78
+border_color = #ffffff 70
+background_color_hover = #dfedfa 92
+border_color_hover = #ffffff 85
+background_color_pressed = #bdcee5 92
+border_color_pressed = #ffffff 80
+
+# Panel: always visible, above desktop, in the lower center of the monitor.
+panel_items = L
+panel_size = 238 76
+panel_margin = 0 18
+panel_padding = 13 6 9
+panel_background_id = 1
+panel_position = bottom center horizontal
+panel_layer = top
+panel_monitor = all
+panel_shrink = 0
+panel_dock = 0
+panel_pivot_struts = 0
+panel_strut_policy = none
+panel_window_name = smol-dock
+
+# Three real launchers.
+launcher_padding = 6 4 10
+launcher_icon_size = 52
+launcher_icon_theme = Papirus
+launcher_icon_theme_override = 1
+launcher_item_app = /usr/share/applications/smol-browser.desktop
+launcher_item_app = /usr/share/applications/smol-files.desktop
+launcher_item_app = /usr/share/applications/smol-settings.desktop
+launcher_tooltip = 1
+
+# Make each launcher respond to hover without auto-hiding or shrinking.
+mouse_effects = 1
+mouse_hover_icon_asb = 100 0 15
+mouse_pressed_icon_asb = 100 0 -10

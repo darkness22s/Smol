@@ -1,0 +1,16 @@
+#!/bin/sh
+# Render SVG into a desktop-friendly PNG. pcmanfm-qt may lack SVG support in VMs.
+set -eu
+src=/usr/share/backgrounds/smol/smol.svg
+dest=/usr/share/backgrounds/smol/smol.png
+test -s "$src"
+command -v rsvg-convert >/dev/null 2>&1 || {
+  echo "rsvg-convert is missing; cannot render SMOL wallpaper" >&2
+  exit 1
+}
+rsvg-convert --width 1920 --height 1080 --output "$dest" "$src"
+test -s "$dest"
+command -v chromium >/dev/null 2>&1 || { echo "Chromium missing" >&2; exit 1; }
+command -v tint2 >/dev/null 2>&1 || { echo "Tint2 missing" >&2; exit 1; }
+command -v pcmanfm-qt >/dev/null 2>&1 || { echo "PCManFM-Qt missing" >&2; exit 1; }
+echo "SMOL PNG wallpaper rendered; Chromium, Tint2 and desktop manager present."

@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=Browser
-Comment=Open NetSurf, a lightweight browser; install Chromium for modern web app testing
-Exec=netsurf-gtk
-TryExec=netsurf-gtk
-Icon=web-browser
+Name=Chromium
+Comment=Launch the full Chromium web browser
+Exec=chromium %U
+TryExec=chromium
+Icon=chromium
 Terminal=false
 Categories=Network;WebBrowser;

@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=SMOL Dock
-Comment=Centered three-app dock inspired by the reference design
-Exec=plank
-OnlyShowIn=LXQt;
-X-LXQt-Need-Tray=false
